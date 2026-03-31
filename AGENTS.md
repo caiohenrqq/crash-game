@@ -89,9 +89,12 @@ Before finishing:
 - Keep files focused on one responsibility.
 - Use explicit names tied to the domain and use case.
 - Avoid comment-dependent code.
+- Prefer single-line guard clauses for trivial early returns such as `if (!value) return null;` when the branch contains only that return.
 - Avoid premature abstractions.
 - Avoid shared packages until duplication is real.
+- Do not create barrel files or barrel-style re-export modules such as re-export-only `index.ts` or `index.tsx` files. Import concrete modules directly.
 - Do not weaken compiler settings or validation rules to make code pass.
+- When cross-cutting files such as `package.json`, `bun.lock`, `TOOLS.md`, `AGENTS.md`, or `CHANGELOG.md` span multiple concerns, do not over-optimize the commit split. Put them in the commit where they make the most sense, or move them to another commit if that produces a cleaner history.
 
 ## Code Design Rules
 

@@ -13,9 +13,8 @@ type ValidatedTokenClaims = {
 export function getAuthenticatedPlayer(
 	claims: ValidatedTokenClaims,
 ): AuthenticatedPlayer {
-	if (!claims.sub) {
+	if (!claims.sub)
 		throw new Error('Validated token is missing required "sub" claim');
-	}
 
 	return {
 		playerId: claims.sub,

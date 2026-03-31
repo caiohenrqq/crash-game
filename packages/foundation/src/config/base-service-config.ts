@@ -30,9 +30,7 @@ export function getRequiredString(
 	value: string | undefined,
 	key: string,
 ): string {
-	if (!value) {
-		throw new Error(`Missing required environment variable "${key}"`);
-	}
+	if (!value) throw new Error(`Missing required environment variable "${key}"`);
 
 	return value;
 }
@@ -43,9 +41,8 @@ export function getPositiveInteger(
 ): number {
 	const parsedValue = Number.parseInt(getRequiredString(value, key), 10);
 
-	if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
+	if (!Number.isInteger(parsedValue) || parsedValue <= 0)
 		throw new Error(`Environment variable "${key}" must be a positive integer`);
-	}
 
 	return parsedValue;
 }

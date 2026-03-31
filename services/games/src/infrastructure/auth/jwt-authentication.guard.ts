@@ -38,9 +38,8 @@ export class JwtAuthenticationGuard implements CanActivate {
 }
 
 function getBearerToken(authorizationHeader: string | undefined): string {
-	if (!authorizationHeader?.startsWith('Bearer ')) {
+	if (!authorizationHeader?.startsWith('Bearer '))
 		throw new UnauthorizedException('Missing bearer token');
-	}
 
 	return authorizationHeader.slice('Bearer '.length);
 }
