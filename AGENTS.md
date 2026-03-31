@@ -40,6 +40,7 @@ Follow `docs/stack.md` for all selected technologies, stack rules, and still-ope
 - Keep service-to-service communication asynchronous through the broker.
 - Keep one public gateway entrypoint. Kong is the current baseline.
 - Do not use git commands unless the user explicitly gives permission.
+- Before running any `git add` or `git commit` command, read `docs/commits.md`.
 - If an implementation would diverge from the docs or current repo constraints, stop and ask the user.
 
 ## Execution Checklist
@@ -66,7 +67,7 @@ During implementation:
 2. Implement the minimum code to pass.
 3. Refactor only with tests passing.
 4. Update docs if architecture, contracts, stack, or scope changed.
-5. Append one new entry to `CHANGELOG.md` when a feature, fix, refactor, docs-only change, test change, build change, or chore task is completed.
+5. Append one new entry to `CHANGELOG.md` only when the completed work is significant enough to matter in project history, such as a user-facing feature, a meaningful bug fix, an architectural change, or an important build or infrastructure fix.
 
 Before finishing:
 
@@ -75,7 +76,7 @@ Before finishing:
 - no unnecessary abstraction or file was introduced
 - boundaries in `docs/architecture.md` still hold
 - stack and tool usage still match `docs/stack.md` and `TOOLS.md`
-- `CHANGELOG.md` received one new one-line entry for the completed task
+- `CHANGELOG.md` received one new one-line entry when the completed task is significant enough to record
 - no git command was used without explicit user permission
 
 ## Coding Rules
@@ -161,7 +162,7 @@ For test scope and levels, follow `docs/testing.md`.
 - Keep one primary home for each rule.
 - Use `README.md` nomenclature: `Game Service`, `Wallet Service`, `Round`, `Bet`, `Crash Point`, `Wallet`.
 - Use relative repo paths only. Never hard-code machine-specific paths.
-- Add one direct one-line entry to `CHANGELOG.md` at the end of each completed task.
+- Add one direct one-line entry to `CHANGELOG.md` only for significant completed work.
 - Use one prefix only: `[FEATURE]`, `[FIX]`, `[REFACTOR]`, `[DOCS]`, `[TEST]`, `[BUILD]`, or `[CHORE]`.
 
 ## Secrets And Sensitive Data
