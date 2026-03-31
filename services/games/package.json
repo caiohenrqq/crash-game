@@ -1,22 +1,40 @@
 {
-  "name": "@crash/games",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "dev": "bun run --watch src/main.ts",
-    "start": "bun run src/main.ts",
-    "test": "bun test tests/unit",
-    "test:e2e": "bun test tests/e2e"
-  },
-  "dependencies": {
-    "@nestjs/common": "^11.1.17",
-    "@nestjs/core": "^11.1.17",
-    "@nestjs/platform-express": "^11.1.17",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
-  },
-  "devDependencies": {
-    "bun-types": "latest",
-    "typescript": "^5.8.3"
-  }
+	"name": "@crash/games",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "bun --env-file=.env.host --watch src/main.ts",
+		"start": "bun --env-file=.env.host src/main.ts",
+		"typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
+		"test": "bun test ./tests/unit",
+		"test:e2e": "bun test ./tests/e2e/bootstrap.e2e-spec.ts",
+		"migration:create": "bun --env-file=.env.host ./node_modules/.bin/mikro-orm migration:create --config ./src/infrastructure/database/mikro-orm.config.ts",
+		"migration:up": "bun --env-file=.env.host ./node_modules/.bin/mikro-orm migration:up --config ./src/infrastructure/database/mikro-orm.config.ts",
+		"migration:down": "bun --env-file=.env.host ./node_modules/.bin/mikro-orm migration:down --config ./src/infrastructure/database/mikro-orm.config.ts",
+		"migration:list": "bun --env-file=.env.host ./node_modules/.bin/mikro-orm migration:list --config ./src/infrastructure/database/mikro-orm.config.ts"
+	},
+	"dependencies": {
+		"@crash/foundation": "workspace:*",
+		"@mikro-orm/core": "^7.0.7",
+		"@mikro-orm/migrations": "^7.0.7",
+		"@mikro-orm/nestjs": "^7.0.1",
+		"@mikro-orm/postgresql": "^7.0.7",
+		"@nestjs/common": "^11.1.17",
+		"@nestjs/core": "^11.1.17",
+		"@nestjs/platform-express": "^11.1.17",
+		"@nestjs/swagger": "^11.2.6",
+		"class-transformer": "^0.5.1",
+		"class-validator": "^0.15.1",
+		"jose": "^6.2.2",
+		"reflect-metadata": "^0.2.2",
+		"rxjs": "^7.8.2",
+		"swagger-ui-express": "^5.0.1"
+	},
+	"devDependencies": {
+		"@mikro-orm/cli": "^7.0.7",
+		"@nestjs/testing": "^11.1.17",
+		"bun-types": "latest",
+		"tsx": "^4.21.0",
+		"typescript": "^5.8.3"
+	}
 }
