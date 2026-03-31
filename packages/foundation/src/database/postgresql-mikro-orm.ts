@@ -3,13 +3,18 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { defineConfig, PostgreSqlDriver } from '@mikro-orm/postgresql';
 import type { DynamicModule } from '@nestjs/common';
 
+type MikroOrmEntity = NonNullable<
+	Parameters<typeof defineConfig>[0]['entities']
+>[number];
+
 export function createPostgreSqlMikroOrmConfig(options: {
 	databaseUrl: string;
 	migrationsPath: string;
+	entities?: MikroOrmEntity[];
 }): ReturnType<typeof defineConfig> {
 	return defineConfig({
 		clientUrl: options.databaseUrl,
-		entities: [],
+		entities: options.entities ?? [],
 		extensions: [Migrator],
 		discovery: {
 			warnWhenNoEntities: false,
@@ -24,6 +29,7 @@ export function createPostgreSqlMikroOrmConfig(options: {
 export function createNestPostgreSqlMikroOrmModule(options: {
 	databaseUrl: string;
 	migrationsPath: string;
+	entities?: MikroOrmEntity[];
 }): DynamicModule | Promise<DynamicModule> {
 	return MikroOrmModule.forRoot({
 		driver: PostgreSqlDriver,

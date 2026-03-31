@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { loadWalletsConfig } from '@/infrastructure/config/wallets-config';
+import { WalletEntitySchema } from '@/infrastructure/database/entities/wallet.entity';
 import { getMikroOrmConfig } from '@/infrastructure/database/mikro-orm.config';
 
 describe('getMikroOrmConfig', () => {
@@ -17,7 +18,7 @@ describe('getMikroOrmConfig', () => {
 		expect(config.clientUrl).toBe(
 			'postgresql://admin:admin@localhost:5432/wallets',
 		);
-		expect(config.entities).toEqual([]);
+		expect(config.entities).toEqual([WalletEntitySchema]);
 		expect(config.discovery?.warnWhenNoEntities).toBe(false);
 		expect(config.migrations?.path).toEndWith(
 			'/src/infrastructure/database/migrations',

@@ -20,6 +20,7 @@
       "name": "@crash/foundation",
       "version": "0.0.1",
       "dependencies": {
+        "@mikro-orm/core": "^7.0.7",
         "@mikro-orm/migrations": "^7.0.7",
         "@mikro-orm/nestjs": "^7.0.1",
         "@mikro-orm/postgresql": "^7.0.7",
