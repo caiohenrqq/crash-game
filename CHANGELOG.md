@@ -33,3 +33,4 @@ Rules:
 [BUILD] Complete M0 auth integration with global JWT guards, public health routes, authenticated `me` endpoints, and Bun env-file migration scripts
 [BUILD] Add repo typecheck scripts covering backend tests and require typecheck with Biome before task closeout
 [REFACTOR] Consolidate M0 foundations through a shared backend package, explicit host/docker env files, and renamed integration bootstrap tests
+[FEATURE] Add M1 Wallet Service core with wallet creation, authenticated lookup, integer-cent balances, and first wallet migration
