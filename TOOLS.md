@@ -25,6 +25,24 @@ Rules:
 - Prefer `bun test` for tests.
 - Do not switch to npm, pnpm, or yarn unless the user explicitly approves it.
 
+## Repo Scripts
+
+Run these from the repository root:
+
+- `bun run test`
+- `bun run lint`
+- `bun run fix:all`
+- `bun run typecheck`
+- `bun run test:foundation`
+- `bun run test:e2e`
+
+Gotchas:
+
+- `test` runs foundation unit tests, backend service unit tests, and backend e2e tests.
+- `lint` should stay non-mutating.
+- `fix:all` rewrites files through Biome.
+- `typecheck` runs TypeScript checks for the shared foundation package and both backend services, including tests.
+
 ## Docker Commands
 
 Run these from the repository root:
@@ -44,14 +62,22 @@ Run these from `services/games/` or `services/wallets/`:
 
 - `bun run dev`
 - `bun run start`
-- `bun test tests/unit`
-- `bun test tests/e2e`
+- `bun run typecheck`
+- `bun run test:e2e`
+- `bun run migration:create`
+- `bun run migration:up`
+- `bun run migration:down`
+- `bun run migration:list`
+- `bun test ./tests/unit`
+- `bun test ./tests/e2e/bootstrap.e2e-spec.ts`
 
 Gotchas:
 
-- Service `package.json` files currently expose `dev`, `start`, `test`, and `test:e2e`.
+- Service `package.json` files currently expose `dev`, `start`, `typecheck`, `test`, `test:e2e`, and migration scripts.
+- Migrations are service-local and use each service's own MikroORM config.
 - Prefer existing scripts over raw CLI invocations when both exist.
-- Use service-local `.env` files when running outside Docker.
+- Host-side service scripts load `.env.host`.
+- Docker runtime loads `.env.docker`.
 
 ## Frontend Commands
 

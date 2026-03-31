@@ -1,17 +1,27 @@
 {
-  "name": "crash-game",
-  "private": true,
-  "workspaces": [
-    "services/*",
-    "packages/*",
-    "frontend"
-  ],
-  "scripts": {
-    "docker:up": "docker compose up",
-    "docker:down": "docker compose down",
-    "docker:prune": "docker compose down -v --rmi all --remove-orphans && docker volume prune -f"
-  },
-  "devDependencies": {
-    "bun-types": "latest"
-  }
+	"name": "crash-game",
+	"private": true,
+	"workspaces": [
+		"services/*",
+		"packages/*",
+		"frontend"
+	],
+	"scripts": {
+		"lint": "biome check .",
+		"fix:all": "biome check --write .",
+		"typecheck": "cd packages/foundation && bun run typecheck && cd ../../services/games && bun run typecheck && cd ../wallets && bun run typecheck",
+		"test": "cd packages/foundation && bun run test && cd ../../services/games && bun run test && bun run test:e2e && cd ../wallets && bun run test && bun run test:e2e",
+		"test:foundation": "cd packages/foundation && bun run test",
+		"test:e2e": "cd services/games && bun run test:e2e && cd ../wallets && bun run test:e2e",
+		"docker:up": "docker compose up",
+		"docker:down": "docker compose down",
+		"docker:prune": "docker compose down -v --rmi all --remove-orphans && docker volume prune -f"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.10",
+		"bun-types": "latest"
+	},
+	"dependencies": {
+		"@types/bun": "^1.3.11"
+	}
 }

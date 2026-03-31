@@ -21,6 +21,19 @@ Implement in this order:
 7. frontend gameplay flow
 8. `bun run docker:up` end-to-end readiness
 
+## Current State
+
+The repository is still in `M0` foundation work.
+
+Today the codebase should provide:
+
+- a shared backend foundation package for config parsing, Swagger/bootstrap helpers, MikroORM bootstrap helpers, and test helpers
+- one explicit service-local config entrypoint per backend service
+- explicit host-shell env files and Docker env files per backend service
+- `tests/unit/` and `tests/e2e/` scaffolding in each service, with current e2e coverage focused on bootstrap wiring
+
+Later milestones should build on top of this foundation rather than replacing it with parallel setup paths.
+
 ## Success
 
 - one valid bet per player per round

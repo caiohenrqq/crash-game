@@ -31,6 +31,7 @@ TDD is mandatory.
 - broker publisher and consumer behavior
 - auth guard integration
 - WebSocket event assembly
+- M0 bootstrap coverage for app startup, Swagger wiring, and protected-route guard wiring
 
 ### E2E
 
@@ -38,6 +39,11 @@ TDD is mandatory.
 - place bet -> round progresses -> cash out or crash -> settlement reflected
 - validation failures: insufficient balance, duplicate bet, late bet, no-bet cashout
 - gateway-path verification where practical
+
+Notes:
+
+- Current backend M0 coverage lives under `tests/e2e/` to match the scaffold defined in `README.md`, but the current assertions are still bootstrap-oriented rather than full request-path e2e.
+- Real HTTP and gateway-level e2e coverage should arrive with later milestones once feature flows exist.
 
 ## Test Design
 

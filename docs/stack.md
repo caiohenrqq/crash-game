@@ -24,6 +24,7 @@
 - Keep separate `games` and `wallets` databases.
 - The frontend container is not scaffolded yet.
 - Keep Bun-first workflows unless a concrete documented blocker appears.
+- A small shared backend foundation package is acceptable for stable cross-service infrastructure helpers, but business and service-specific config remain local.
 
 ## Stack Rules
 
@@ -48,3 +49,20 @@
 - Selected test runner: Bun test.
 - Selected money representation: integer cents.
 - Swagger / OpenAPI should be added from the start.
+
+## Official Documentation
+
+- Bun: https://bun.com/docs
+- NestJS: https://docs.nestjs.com/
+- TypeScript: https://www.typescriptlang.org/docs/
+- MikroORM: https://mikro-orm.io/docs/quick-start
+- PostgreSQL: https://www.postgresql.org/docs/
+- RabbitMQ: https://www.rabbitmq.com/docs
+- Kong Gateway: https://developer.konghq.com/index/gateway/
+- Keycloak: https://www.keycloak.org/documentation
+- `socket.io`: https://socket.io/docs/v4/
+- TanStack Start: https://tanstack.com/start/latest/docs/framework/react/overview
+- TanStack Query: https://tanstack.com/query/v5/docs/framework/react/overview
+- Zustand: https://zustand.docs
+- Swagger / OpenAPI: https://swagger.io/docs/
+- Docker Compose: https://docs.docker.com/compose/

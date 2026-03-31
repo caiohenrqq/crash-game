@@ -29,3 +29,7 @@ Rules:
 
 [FIX] Point the Postgres Docker healthcheck at the bootstrap `postgres` database instead of the missing `admin` database
 [FIX] Align Docker healthchecks with the actual container tools and Keycloak management health port
+[BUILD] Add symmetric M0 service foundations for config, Swagger, JWT auth, and MikroORM migration wiring
+[BUILD] Complete M0 auth integration with global JWT guards, public health routes, authenticated `me` endpoints, and Bun env-file migration scripts
+[BUILD] Add repo typecheck scripts covering backend tests and require typecheck with Biome before task closeout
+[REFACTOR] Consolidate M0 foundations through a shared backend package, explicit host/docker env files, and renamed integration bootstrap tests

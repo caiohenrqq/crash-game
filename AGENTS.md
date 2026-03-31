@@ -21,6 +21,7 @@ Build the crash game described in `README.md` with:
 Rules:
 
 - If repo state or another doc diverges from `README.md`, stop and ask the user how to proceed.
+- Do not edit `README.md`. Treat it as the interview challenge problem statement and product overview unless the user explicitly says otherwise.
 - If implementation requires a new assumption not already documented, stop and ask the user.
 - Do not invent product rules, features, or acceptance criteria.
 - Prefer official or primary sources when researching dependencies, frameworks, runtimes, cloud providers, or external tools.
@@ -76,6 +77,7 @@ Before finishing:
 - no unnecessary abstraction or file was introduced
 - boundaries in `docs/architecture.md` still hold
 - stack and tool usage still match `docs/stack.md` and `TOOLS.md`
+- run `bun run fix:all` and `bun run typecheck` before closing the task
 - `CHANGELOG.md` received one new one-line entry when the completed task is significant enough to record
 - no git command was used without explicit user permission
 
@@ -160,7 +162,8 @@ For test scope and levels, follow `docs/testing.md`.
 - Keep docs concise, keyword-rich, and implementation-ready.
 - Avoid filler, buzzwords, repeated explanations, and generic best-practice prose.
 - Keep one primary home for each rule.
-- Use `README.md` nomenclature: `Game Service`, `Wallet Service`, `Round`, `Bet`, `Crash Point`, `Wallet`.
+- Follow `README.md` nomenclature exactly: `Game Service`, `Wallet Service`, `Round`, `Bet`, `Crash Point`, `Wallet`.
+- Make sure code, docs, scripts, and naming choices stay aligned with the terms used in `README.md`.
 - Use relative repo paths only. Never hard-code machine-specific paths.
 - Add one direct one-line entry to `CHANGELOG.md` only for significant completed work.
 - Use one prefix only: `[FEATURE]`, `[FIX]`, `[REFACTOR]`, `[DOCS]`, `[TEST]`, `[BUILD]`, or `[CHORE]`.
