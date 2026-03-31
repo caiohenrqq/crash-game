@@ -1,0 +1,50 @@
+# Stack Baseline
+
+## Selected Stack
+
+- Runtime: Bun
+- Backend: NestJS + TypeScript
+- ORM: MikroORM
+- Database: PostgreSQL
+- Broker: RabbitMQ
+- API Gateway: Kong
+- IdP baseline: Keycloak
+- WebSocket: `@nestjs/websockets` + `socket.io`
+- Frontend: TanStack Start
+- Frontend server state: TanStack Query
+- Frontend client state: Zustand
+- Testing: Bun test
+- API docs: Swagger / OpenAPI
+- Container orchestration: Docker Compose
+- Money representation: integer cents
+
+## Repo Baseline Notes
+
+- Kong, RabbitMQ, and Keycloak are the current repo baseline, not new scope.
+- Keep separate `games` and `wallets` databases.
+- The frontend container is not scaffolded yet.
+- Keep Bun-first workflows unless a concrete documented blocker appears.
+
+## Stack Rules
+
+- Use MikroORM consistently in both services.
+- Use `socket.io` consistently for real-time communication.
+- Keep authentication aligned with OIDC and JWT validation.
+- Do not replace current infra components unless the user approves the change and docs are updated.
+- Do not use floating-point arithmetic for money.
+
+## Still Open
+
+- exact provably fair formula and verification payload
+- exact broker event contracts and compensation flow
+- exact frontend charting and animation implementation
+
+## Updated Stack Docs
+
+- Selected ORM: MikroORM in both services, with separate `games` and `wallets` databases.
+- Selected frontend framework: TanStack Start.
+- Selected WebSocket adapter: `socket.io`.
+- Selected frontend state tools: TanStack Query + Zustand.
+- Selected test runner: Bun test.
+- Selected money representation: integer cents.
+- Swagger / OpenAPI should be added from the start.
