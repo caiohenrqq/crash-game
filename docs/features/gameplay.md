@@ -33,6 +33,7 @@ Deliver `Game Service` behavior for `Round`, `Bet`, `Crash Point`, cash out, his
 - REST handles player actions and reads
 - WebSocket is server-to-client only
 - wallet-impacting actions cross the broker, not direct database writes
+- M2 round lifecycle progression is local single-instance behavior only; distributed coordination is deferred to later milestones
 
 ## Test Focus
 
