@@ -12,13 +12,14 @@ This repository is a full-stack crash game challenge with:
 
 Implement in this order:
 
-1. `Wallet Service` balance safety and wallet endpoints
-2. `Game Service` round lifecycle and bet rules
-3. async communication between `Game Service` and `Wallet Service`
-4. required REST endpoints
-5. required WebSocket synchronization
-6. frontend gameplay flow
-7. `bun run docker:up` end-to-end readiness
+1. service foundations for auth, persistence, migrations, and API docs
+2. `Wallet Service` balance safety and wallet endpoints
+3. `Game Service` round lifecycle and current round state
+4. async communication between `Game Service` and `Wallet Service`
+5. required gameplay REST endpoints
+6. required WebSocket synchronization
+7. frontend gameplay flow
+8. `bun run docker:up` end-to-end readiness
 
 ## Success
 
