@@ -31,13 +31,9 @@ import { WalletsController } from './presentation/controllers/wallets.controller
 			provide: APP_GUARD,
 			useExisting: JwtAuthenticationGuard,
 		},
-		MikroOrmWalletRepository,
 		{
 			provide: WalletRepository,
-			inject: [MikroOrmWalletRepository],
-			useFactory: (
-				walletRepository: MikroOrmWalletRepository,
-			): WalletRepository => walletRepository,
+			useClass: MikroOrmWalletRepository,
 		},
 		{
 			provide: TOKEN_VERIFIER,

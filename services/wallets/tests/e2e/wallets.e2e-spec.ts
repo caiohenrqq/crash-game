@@ -5,7 +5,6 @@ import { AppModule } from '@/app.module';
 import { WalletRepository } from '@/application/ports/wallet.repository';
 import { Wallet } from '@/domain/wallet';
 import { TOKEN_VERIFIER } from '@/infrastructure/auth/token-verifier';
-import { MikroOrmWalletRepository } from '@/infrastructure/database/mikro-orm-wallet.repository';
 import {
 	configureApplication,
 	createSwaggerDocument,
@@ -62,7 +61,7 @@ describe('Wallets e2e', () => {
 			.useValue({
 				verify,
 			})
-			.overrideProvider(MikroOrmWalletRepository)
+			.overrideProvider(WalletRepository)
 			.useValue(walletRepository)
 			.compile();
 
