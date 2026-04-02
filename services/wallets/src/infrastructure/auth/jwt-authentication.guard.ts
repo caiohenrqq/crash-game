@@ -29,11 +29,21 @@ export class JwtAuthenticationGuard implements CanActivate {
 
 		const request = context.switchToHttp().getRequest();
 		const token = getBearerToken(request.headers.authorization);
-		const claims = await this.tokenVerifier.verify(token);
+		const claims = await this.verifyBearerToken(token);
 
 		request.authenticatedPlayer = getAuthenticatedPlayer(claims);
 
 		return true;
+	}
+
+	private async verifyBearerToken(token: string) {
+		try {
+			return await this.tokenVerifier.verify(token);
+		} catch (error) {
+			if (error instanceof UnauthorizedException) throw error;
+
+			throw new UnauthorizedException('Invalid bearer token');
+		}
 	}
 }
 

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import { createHttpExecutionContext } from '@crash/foundation/testing/http-execution-context';
+import { UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { AuthenticatedRequest } from '@/infrastructure/auth/authenticated-request';
 import { JwtAuthenticationGuard } from '@/infrastructure/auth/jwt-authentication.guard';
@@ -48,6 +49,22 @@ describe('JwtAuthenticationGuard', () => {
 				}),
 			),
 		).rejects.toThrow('Missing bearer token');
+	});
+
+	test('normalizes verifier failures to unauthorized responses', async () => {
+		verify.mockImplementationOnce(async () => {
+			throw new Error('Invalid token');
+		});
+
+		await expect(
+			guard.canActivate(
+				createHttpExecutionContext({
+					headers: {
+						authorization: 'Bearer invalid.jwt.token',
+					},
+				}),
+			),
+		).rejects.toBeInstanceOf(UnauthorizedException);
 	});
 
 	test('allows public routes without requiring a bearer token', async () => {
