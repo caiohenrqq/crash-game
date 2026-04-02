@@ -5,7 +5,9 @@
 	"exports": {
 		"./config/base-service-config": "./src/config/base-service-config.ts",
 		"./database/postgresql-mikro-orm": "./src/database/postgresql-mikro-orm.ts",
+		"./messaging/settlement": "./src/messaging/settlement.ts",
 		"./nest/http-application": "./src/nest/http-application.ts",
+		"./nest/http-throttler": "./src/nest/http-throttler.ts",
 		"./testing/http-execution-context": "./src/testing/http-execution-context.ts"
 	},
 	"scripts": {
@@ -18,7 +20,9 @@
 		"@mikro-orm/nestjs": "^7.0.1",
 		"@mikro-orm/postgresql": "^7.0.7",
 		"@nestjs/common": "^11.1.17",
-		"@nestjs/swagger": "^11.2.6"
+		"@nestjs/core": "^11.1.17",
+		"@nestjs/swagger": "^11.2.6",
+		"@nestjs/throttler": "^6.5.0"
 	},
 	"devDependencies": {
 		"bun-types": "latest",
