@@ -23,7 +23,7 @@ Implement in this order:
 
 ## Current State
 
-The repository is still in `M0` foundation work.
+The repository is still in `M2` foundation work.
 
 Today the codebase should provide:
 

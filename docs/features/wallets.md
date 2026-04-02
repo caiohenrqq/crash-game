@@ -22,6 +22,12 @@ Deliver `Wallet Service` as the source of truth for `Wallet` balance and gamepla
 - balance must never go negative
 - Wallet Service is the only money authority
 - credit and debit are not public REST endpoints
+- `M3.2` consumes `bet_debit` settlement requests from RabbitMQ and publishes completion events
+- duplicate `operationId` must not apply the same debit twice
+- `M3.3` replays unpublished completion events on startup before new messages are consumed
+- `M3.4` consumes `cashout_credit` and `crash_loss` settlement requests from RabbitMQ
+- `cashout_credit` credits the wallet exactly once by `operationId`
+- `crash_loss` publishes a terminal completion event without mutating wallet balance
 
 ## Test Focus
 
@@ -32,5 +38,4 @@ Deliver `Wallet Service` as the source of truth for `Wallet` balance and gamepla
 
 ## Open Questions
 
-- exact broker contracts
 - exact operation model details

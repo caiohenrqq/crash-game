@@ -34,6 +34,12 @@ Deliver `Game Service` behavior for `Round`, `Bet`, `Crash Point`, cash out, his
 - WebSocket is server-to-client only
 - wallet-impacting actions cross the broker, not direct database writes
 - M2 round lifecycle progression is local single-instance behavior only; distributed coordination is deferred to later milestones
+- `M3.2` wires `POST /games/bet` through RabbitMQ request/completion events for `bet_debit`
+- `Game Service` persists bet and settlement state before waiting for the completion event
+- `M3.3` replays unpublished settlement requests on startup and ignores duplicate completion events
+- `M3.4` adds `POST /games/bet/cashout`, settles `cashout_credit` through RabbitMQ, and publishes `crash_loss` requests for accepted bets when a round crashes
+- the active-round multiplier is server-authoritative and deterministic: linear interpolation from `1.00x` to `Crash Point` across `ACTIVE_ROUND_PHASE_MS`
+- cash out payout uses integer cents only and floors fractional cents
 
 ## Test Focus
 
@@ -44,5 +50,4 @@ Deliver `Game Service` behavior for `Round`, `Bet`, `Crash Point`, cash out, his
 
 ## Open Questions
 
-- exact event schema names and payloads
 - exact provably fair formula details
