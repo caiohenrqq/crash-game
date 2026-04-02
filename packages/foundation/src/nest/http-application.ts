@@ -11,6 +11,7 @@ export function configureHttpApplication(
 	options: {
 		title: string;
 		description: string;
+		apiDocsEnabled: boolean;
 	},
 ): void {
 	app.getHttpAdapter().getInstance().disable('x-powered-by');
@@ -22,6 +23,8 @@ export function configureHttpApplication(
 		}),
 	);
 
+	if (!options.apiDocsEnabled) return;
+
 	SwaggerModule.setup('docs', app, createHttpSwaggerDocument(app, options));
 }
 
@@ -30,6 +33,7 @@ export function createHttpSwaggerDocument(
 	options: {
 		title: string;
 		description: string;
+		apiDocsEnabled?: boolean;
 	},
 ): OpenAPIObject {
 	return SwaggerModule.createDocument(
