@@ -11,6 +11,7 @@ describe('GetWalletUseCase', () => {
 		const useCase = new GetWalletUseCase({
 			findByPlayerId: async () => existingWallet,
 			create: async (wallet) => wallet,
+			save: async (wallet) => wallet,
 		});
 
 		const wallet = await useCase.execute({
@@ -25,6 +26,7 @@ describe('GetWalletUseCase', () => {
 		const useCase = new GetWalletUseCase({
 			findByPlayerId: async () => null,
 			create: async (wallet) => wallet,
+			save: async (wallet) => wallet,
 		});
 
 		await expect(

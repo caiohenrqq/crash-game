@@ -12,6 +12,7 @@ describe('CreateWalletUseCase', () => {
 				createdWallets.push(wallet);
 				return wallet;
 			},
+			save: async (wallet) => wallet,
 		});
 
 		const wallet = await useCase.execute({
@@ -27,6 +28,7 @@ describe('CreateWalletUseCase', () => {
 		const useCase = new CreateWalletUseCase({
 			findByPlayerId: async () => Wallet.create('player-123'),
 			create: async (wallet) => wallet,
+			save: async (wallet) => wallet,
 		});
 
 		await expect(
