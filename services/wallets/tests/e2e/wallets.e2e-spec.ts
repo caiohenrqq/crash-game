@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { afterAll, beforeAll, describe, expect, mock, test } from 'bun:test';
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
@@ -5,6 +6,7 @@ import { AppModule } from '@/app.module';
 import { WalletRepository } from '@/application/ports/wallet.repository';
 import { Wallet } from '@/domain/wallet';
 import { TOKEN_VERIFIER } from '@/infrastructure/auth/token-verifier';
+import { RabbitMqWalletSettlementBroker } from '@/infrastructure/broker/rabbit-mq-wallet-settlement-broker';
 import {
 	configureApplication,
 	createSwaggerDocument,
@@ -52,6 +54,13 @@ describe('Wallets e2e', () => {
 				});
 				return wallet;
 			},
+			save: async (wallet) => {
+				wallets.set(wallet.playerId, {
+					playerId: wallet.playerId,
+					balanceInCents: wallet.balanceInCents,
+				});
+				return wallet;
+			},
 		};
 
 		const moduleRef = await Test.createTestingModule({
@@ -60,6 +69,12 @@ describe('Wallets e2e', () => {
 			.overrideProvider(TOKEN_VERIFIER)
 			.useValue({
 				verify,
+			})
+			.overrideProvider(RabbitMqWalletSettlementBroker)
+			.useValue({
+				onModuleInit: mock(async () => undefined),
+				onModuleDestroy: mock(async () => undefined),
+				publishCompleted: mock(async () => undefined),
 			})
 			.overrideProvider(WalletRepository)
 			.useValue(walletRepository)
