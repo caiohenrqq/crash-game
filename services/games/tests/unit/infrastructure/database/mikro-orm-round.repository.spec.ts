@@ -36,4 +36,42 @@ describe('MikroOrmRoundRepository', () => {
 			},
 		});
 	});
+
+	test('persists bet settlement fields when creating a round', async () => {
+		const insert = mock(async () => undefined);
+		const repository = new MikroOrmRoundRepository({
+			fork: mock(() => ({
+				find: mock(async () => []),
+				insert,
+			})),
+		} as never);
+
+		await repository.create({
+			id: 1,
+			state: 'betting',
+			crashPoint: {
+				inHundredths: 200,
+			},
+			createdAt: new Date('2026-03-31T12:00:00.000Z'),
+			activatedAt: null,
+			crashedAt: null,
+			bets: [
+				{
+					id: 11,
+					playerId: 'player-123',
+					amountInCents: 300,
+					status: 'pending_debit',
+					payoutInCents: null,
+				},
+			],
+		} as never);
+
+		expect(insert).toHaveBeenNthCalledWith(2, expect.anything(), {
+			roundId: 1,
+			playerId: 'player-123',
+			amountInCents: 300,
+			status: 'pending_debit',
+			payoutInCents: null,
+		});
+	});
 });

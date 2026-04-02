@@ -5,6 +5,13 @@ export type BetEntity = {
 	roundId: number;
 	playerId: string;
 	amountInCents: number;
+	status:
+		| 'pending_debit'
+		| 'accepted'
+		| 'debit_rejected'
+		| 'cashed_out'
+		| 'lost';
+	payoutInCents: number | null;
 };
 
 export const BetEntitySchema = new EntitySchema<BetEntity>({
@@ -27,6 +34,14 @@ export const BetEntitySchema = new EntitySchema<BetEntity>({
 		amountInCents: {
 			type: 'number',
 			fieldName: 'amount_in_cents',
+		},
+		status: {
+			type: 'string',
+		},
+		payoutInCents: {
+			type: 'number',
+			fieldName: 'payout_in_cents',
+			nullable: true,
 		},
 	},
 	indexes: [

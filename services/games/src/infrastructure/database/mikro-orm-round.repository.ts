@@ -49,8 +49,12 @@ export class MikroOrmRoundRepository extends RoundRepository {
 			crashedAt: roundEntity.crashedAt,
 			bets: betEntities.map((betEntity) =>
 				Bet.place({
+					id: betEntity.id,
+					roundId: betEntity.roundId,
 					playerId: betEntity.playerId,
 					amountInCents: betEntity.amountInCents,
+					status: betEntity.status,
+					payoutInCents: betEntity.payoutInCents,
 				}),
 			),
 		});
@@ -86,6 +90,8 @@ export class MikroOrmRoundRepository extends RoundRepository {
 				roundId: round.id,
 				playerId: bet.playerId,
 				amountInCents: bet.amountInCents,
+				status: bet.status,
+				payoutInCents: bet.payoutInCents,
 			});
 		}
 
