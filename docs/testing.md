@@ -24,12 +24,22 @@ TDD is mandatory.
 - `Bet` validation and payout calculation
 - `Wallet` credit, debit, and insufficient balance
 - provably fair calculation and verification logic
+- live multiplier calculation and payout flooring
+- cash out completion and crash-loss completion state transitions
 
 ### Integration
 
 - database persistence
 - broker publisher and consumer behavior
+- settlement operation repository persistence
+- bet debit request/completion orchestration
+- startup replay for unpublished settlement messages
+- duplicate completion idempotency
+- cash out request/completion orchestration
+- crash-loss request publication on round crash
 - auth guard integration
+- docs bootstrap gating by environment/config
+- app-level throttling baseline and authenticated tracker behavior
 - WebSocket event assembly
 - M0 bootstrap coverage for app startup, Swagger wiring, and protected-route guard wiring
 
@@ -43,7 +53,8 @@ TDD is mandatory.
 Notes:
 
 - Current backend M0 coverage lives under `tests/e2e/` to match the scaffold defined in `README.md`, but the current assertions are still bootstrap-oriented rather than full request-path e2e.
-- Real HTTP and gateway-level e2e coverage should arrive with later milestones once feature flows exist.
+- Real gateway-level e2e coverage should arrive with later milestones once more gameplay flows exist.
+- `M3.4` is currently covered primarily with focused unit tests for multiplier calculation, payout flooring, wallet credit handling, cash out completion, and crash-loss publication.
 
 ## Test Design
 

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { afterAll, beforeAll, describe, expect, mock, test } from 'bun:test';
 import { createHttpExecutionContext } from '@crash/foundation/testing/http-execution-context';
 import type { ExecutionContext, INestApplication } from '@nestjs/common';
@@ -37,8 +38,13 @@ describe('application bootstrap integration', () => {
 			{ GamesController: ImportedGamesController },
 			{ JwtAuthenticationGuard: ImportedJwtAuthenticationGuard },
 			{ GetCurrentRoundUseCase },
+			{ PlaceBetUseCase },
+			{ CashOutBetUseCase },
 			{ RoundLifecycleService },
+			{ BetRepository },
 			{ RoundRepository },
+			{ SettlementOperationRepository },
+			{ SettlementRequester },
 			{ TOKEN_VERIFIER },
 			{
 				configureApplication,
@@ -48,8 +54,13 @@ describe('application bootstrap integration', () => {
 			import('@/presentation/controllers/games.controller'),
 			import('@/infrastructure/auth/jwt-authentication.guard'),
 			import('@/application/get-current-round.use-case'),
+			import('@/application/place-bet.use-case'),
+			import('@/application/cash-out-bet.use-case'),
 			import('@/application/round-lifecycle.service'),
+			import('@/application/ports/bet.repository'),
 			import('@/application/ports/round.repository'),
+			import('@/application/ports/settlement-operation.repository'),
+			import('@/application/ports/settlement-requester'),
 			import('@/infrastructure/auth/token-verifier'),
 			import('@/presentation/configure-application'),
 		]);
@@ -87,6 +98,31 @@ describe('application bootstrap integration', () => {
 			controllers: [ImportedGamesController],
 			providers: [
 				GetCurrentRoundUseCase,
+				{
+					provide: PlaceBetUseCase,
+					useValue: {
+						execute: mock(async ({ playerId, amountInCents }) => ({
+							id: 11,
+							roundId: 1,
+							playerId,
+							amountInCents,
+							status: 'accepted',
+						})),
+					},
+				},
+				{
+					provide: CashOutBetUseCase,
+					useValue: {
+						execute: mock(async ({ playerId }) => ({
+							id: 11,
+							roundId: 1,
+							playerId,
+							amountInCents: 500,
+							status: 'cashed_out',
+							payoutInCents: 875,
+						})),
+					},
+				},
 				RoundLifecycleService,
 				ImportedJwtAuthenticationGuard,
 				InMemoryRoundRepository,
@@ -97,6 +133,37 @@ describe('application bootstrap integration', () => {
 				{
 					provide: RoundRepository,
 					useExisting: InMemoryRoundRepository,
+				},
+				{
+					provide: BetRepository,
+					useValue: {
+						findByRoundIdAndPlayerId: mock(async () => null),
+						findById: mock(async () => null),
+						create: mock(async (bet) => bet),
+						save: mock(async (bet) => bet),
+						findAcceptedByRoundId: mock(async () => []),
+					},
+				},
+				{
+					provide: SettlementOperationRepository,
+					useValue: {
+						create: mock(async (operation) => operation),
+						save: mock(async (operation) => operation),
+						findByOperationId: mock(async () => null),
+						findUnpublished: mock(async () => []),
+					},
+				},
+				{
+					provide: SettlementRequester,
+					useValue: {
+						publishRequested: mock(async () => undefined),
+						waitForCompletion: mock(async () => ({
+							operationId: 'unused',
+							status: 'succeeded' as const,
+							rejectionReason: null,
+							completedAt: new Date('2026-04-02T12:00:00.000Z'),
+						})),
+					},
 				},
 				{
 					provide: TOKEN_VERIFIER,
@@ -163,6 +230,10 @@ describe('application bootstrap integration', () => {
 		const document = createSwaggerDocument(app);
 
 		expect(document.paths['/me']?.get?.security).toEqual([{ bearer: [] }]);
+		expect(document.paths['/bet']?.post?.security).toEqual([{ bearer: [] }]);
+		expect(document.paths['/bet/cashout']?.post?.security).toEqual([
+			{ bearer: [] },
+		]);
 	});
 
 	test('returns the current round state with public bets', async () => {
@@ -195,17 +266,130 @@ describe('application bootstrap integration', () => {
 			}>;
 		};
 
-		await Bun.sleep(45);
-		const activeRound = await controller.currentRound?.();
-		await Bun.sleep(25);
-		const nextRound = await controller.currentRound?.();
+		const activeRound = await waitForRoundState(controller, 'active', 120);
+		const nextRound = await waitForNextBettingRound(
+			controller,
+			activeRound?.roundId ?? 1,
+			120,
+		);
 
 		expect(activeRound?.state).toBe('active');
 		expect(activeRound?.crashPoint).toBeNull();
 		expect(nextRound?.state).toBe('betting');
 		expect(nextRound?.roundId).toBe(2);
 	});
+
+	test('places a bet for the authenticated player', async () => {
+		const controller = app.get(ControllerClass) as GamesController & {
+			placeBet?: (
+				body: { amountInCents: number },
+				request: { authenticatedPlayer: { playerId: string } },
+			) => Promise<{
+				betId: number;
+				playerId: string;
+				amountInCents: number;
+				status: string;
+			}>;
+		};
+
+		const bet = await controller.placeBet?.(
+			{
+				amountInCents: 500,
+			},
+			{
+				authenticatedPlayer: {
+					playerId: 'player-123',
+				},
+			},
+		);
+
+		expect(bet).toEqual({
+			betId: 11,
+			playerId: 'player-123',
+			amountInCents: 500,
+			status: 'accepted',
+		});
+	});
+
+	test('cashes out the accepted bet for the authenticated player', async () => {
+		const controller = app.get(ControllerClass) as GamesController & {
+			cashOutBet?: (request: {
+				authenticatedPlayer: { playerId: string };
+			}) => Promise<{
+				betId: number;
+				playerId: string;
+				amountInCents: number;
+				status: string;
+				payoutInCents: number;
+			}>;
+		};
+
+		const bet = await controller.cashOutBet?.({
+			authenticatedPlayer: {
+				playerId: 'player-123',
+			},
+		});
+
+		expect(bet).toEqual({
+			betId: 11,
+			playerId: 'player-123',
+			amountInCents: 500,
+			status: 'cashed_out',
+			payoutInCents: 875,
+		});
+	});
 });
+
+async function waitForRoundState(
+	controller: GamesController & {
+		currentRound?: () => Promise<{
+			roundId: number;
+			state: string;
+			crashPoint: string | null;
+			bets: Array<{ playerId: string; amountInCents: number }>;
+		}>;
+	},
+	expectedState: string,
+	timeoutMs: number,
+) {
+	const deadline = Date.now() + timeoutMs;
+
+	while (Date.now() <= deadline) {
+		const round = await controller.currentRound?.();
+
+		if (round?.state === expectedState) return round;
+
+		await Bun.sleep(5);
+	}
+
+	return controller.currentRound?.();
+}
+
+async function waitForNextBettingRound(
+	controller: GamesController & {
+		currentRound?: () => Promise<{
+			roundId: number;
+			state: string;
+			crashPoint: string | null;
+			bets: Array<{ playerId: string; amountInCents: number }>;
+		}>;
+	},
+	previousRoundId: number,
+	timeoutMs: number,
+) {
+	const deadline = Date.now() + timeoutMs;
+
+	while (Date.now() <= deadline) {
+		const round = await controller.currentRound?.();
+
+		if (round?.state === 'betting' && round.roundId > previousRoundId)
+			return round;
+
+		await Bun.sleep(5);
+	}
+
+	return controller.currentRound?.();
+}
 
 declare global {
 	var __gamesCreateHttpExecutionContext: (request: unknown) => ExecutionContext;

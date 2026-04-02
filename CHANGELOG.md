@@ -35,3 +35,8 @@ Rules:
 [REFACTOR] Consolidate M0 foundations through a shared backend package, explicit host/docker env files, and renamed integration bootstrap tests
 [FEATURE] Add M1 Wallet Service core with wallet creation, authenticated lookup, integer-cent balances, and first wallet migration
 [FEATURE] Add M2 Game Service core with Round, Bet, Crash Point, current round reads, and internal round lifecycle progression
+[BUILD] Add M3.1 async settlement foundations with settlement contracts, bet settlement state, and persistent operation stores in both services
+[FEATURE] Add M3.2 RabbitMQ bet debit settlement with `POST /games/bet`, wallet debit consumers, and completion-driven bet acceptance
+[BUILD] Add M3.3 settlement replay hardening for unpublished RabbitMQ messages and idempotent duplicate completion handling
+[FEATURE] Complete M3 with broker-backed cash out credits, crash-loss settlement, deterministic live multiplier calculation, and payout flooring
+[BUILD] Harden backend security defaults with unauthorized JWT failure normalization, env-gated Swagger docs, and shared app-level throttling

@@ -74,7 +74,19 @@ Follow `AGENTS.md` for the layer definitions. This document defines dependency d
 
 - `Game Service` publishes broker events for wallet-impacting actions
 - `Wallet Service` consumes them and applies credit/debit behavior
-- event contracts and compensation flow remain implementation decisions within `README.md`
+- settlement request and completion contracts are keyed by `operationId`
+- `M3.2` currently wires `bet_debit` through RabbitMQ with one completion queue for `Game Service`
+- `M3.3` replays unpublished settlement messages on startup and keeps completion handling idempotent
+- `M3.4` extends the same broker flow to `cashout_credit` and `crash_loss`
+- `Game Service` computes the authoritative live multiplier and payout, then asks `Wallet Service` to apply the resulting credit asynchronously
+- `Wallet Service` stays the only wallet balance authority; `crash_loss` is recorded as a terminal broker completion without a wallet balance mutation
+
+## Security Defaults
+
+- JWT verification failures must return `401 Unauthorized`, not generic `500` errors
+- Swagger `/docs` is enabled only outside `production` unless explicitly overridden by env
+- both backend services apply app-level request throttling with shared env-driven defaults
+- authenticated HTTP throttling keys by `playerId` when available before falling back to request IP
 
 ## Persistence
 
