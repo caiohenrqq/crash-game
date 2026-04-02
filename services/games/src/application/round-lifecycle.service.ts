@@ -1,15 +1,25 @@
+import { randomUUID } from 'node:crypto';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { CrashPoint } from '@/domain/crash-point';
 import { Round } from '@/domain/round';
+import { SettlementOperation } from '@/domain/settlement-operation';
 import { gamesConfig } from '@/infrastructure/config/games-config';
+import { BetRepository } from './ports/bet.repository';
 import { RoundRepository } from './ports/round.repository';
+import { SettlementOperationRepository } from './ports/settlement-operation.repository';
+import { SettlementRequester } from './ports/settlement-requester';
 
 @Injectable()
 export class RoundLifecycleService implements OnModuleInit, OnModuleDestroy {
 	private static ownsLifecycle = false;
 	private timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-	constructor(private readonly roundRepository: RoundRepository) {}
+	constructor(
+		private readonly roundRepository: RoundRepository,
+		private readonly betRepository: BetRepository,
+		private readonly settlementOperationRepository: SettlementOperationRepository,
+		private readonly settlementRequester: SettlementRequester,
+	) {}
 
 	async onModuleInit(): Promise<void> {
 		if (RoundLifecycleService.ownsLifecycle) return;
@@ -55,6 +65,7 @@ export class RoundLifecycleService implements OnModuleInit, OnModuleDestroy {
 		if (round.state === 'active' && activeEndsAt && now >= activeEndsAt) {
 			round.crash(activeEndsAt);
 			await this.roundRepository.save(round);
+			await this.settleCrashedRound(round, activeEndsAt);
 			return this.createNextRound(activeEndsAt);
 		}
 
@@ -95,6 +106,7 @@ export class RoundLifecycleService implements OnModuleInit, OnModuleDestroy {
 				);
 				round.crash(crashedAt);
 				await this.roundRepository.save(round);
+				await this.settleCrashedRound(round, crashedAt);
 				const nextRound = await this.createNextRound(crashedAt);
 				this.scheduleRound(nextRound);
 			}, delay);
@@ -110,5 +122,32 @@ export class RoundLifecycleService implements OnModuleInit, OnModuleDestroy {
 		});
 
 		return this.roundRepository.create(round);
+	}
+
+	private async settleCrashedRound(
+		round: Round,
+		crashedAt: Date,
+	): Promise<void> {
+		const acceptedBets = await this.betRepository.findAcceptedByRoundId(
+			round.id,
+		);
+
+		for (const bet of acceptedBets) {
+			const operation = await this.settlementOperationRepository.create(
+				SettlementOperation.request({
+					operationId: randomUUID(),
+					operationType: 'crash_loss',
+					playerId: bet.playerId,
+					roundId: round.id,
+					betId: bet.id,
+					amountInCents: bet.amountInCents,
+					occurredAt: crashedAt,
+				}),
+			);
+
+			await this.settlementRequester.publishRequested(operation);
+			operation.markPublished(new Date());
+			await this.settlementOperationRepository.save(operation);
+		}
 	}
 }
